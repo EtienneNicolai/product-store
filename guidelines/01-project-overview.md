@@ -157,10 +157,11 @@ dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Stripe.net
 dotnet new xunit -n Store.Api.Tests -o ../Store.Api.Tests
 
-# Frontend
-cd ../../frontend
-ng new . --routing --style=scss --skip-git
-npm install @stripe/stripe-js
+# Frontend - use the v21-lts dist-tag, not @latest (see CLAUDE.md Key Trap 8)
+npx @angular/cli@21 new frontend --routing --style=scss --skip-git
+cd frontend
+npm install --legacy-peer-deps
+npm install @stripe/stripe-js --legacy-peer-deps
 ```
 
 Then:

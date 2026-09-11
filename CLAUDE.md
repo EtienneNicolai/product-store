@@ -74,6 +74,13 @@ by calling into the catalog controller.
    SqlServer` rather than trying to reuse the SQLite one. Money-as-cents (Key Trap 1) already
    avoids the worst cross-provider pitfall (decimal precision), which is most of why this
    two-provider setup is workable at all.
+8. **Use `@angular/cli@21` (the `v21-lts` dist-tag), not `@latest`.** `@latest` resolves to a
+   version requiring a newer Node than what's installed here; `21` is the current LTS and works
+   fine with the installed Node 22.19. Separately, `npm install` in `frontend/` needs
+   `--legacy-peer-deps` - npm 10.9.3 has an arborist bug (`Cannot read properties of null
+   (reading 'edgesOut')`) on this Angular version's `vitest`/`@vitest/browser-playwright` peer
+   dependency graph. The scaffolded app uses Vitest (not Karma/Jasmine) as its test runner -
+   relevant for Session 6's Angular component tests.
 
 ## Running the app locally
 ```powershell
