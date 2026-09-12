@@ -11,10 +11,12 @@ namespace Store.Api.Controllers;
 public class CartController : ControllerBase
 {
     private readonly StoreDbContext _db;
+    private readonly bool _crossSiteCookie;
 
-    public CartController(StoreDbContext db)
+    public CartController(StoreDbContext db, IWebHostEnvironment env)
     {
         _db = db;
+        _crossSiteCookie = !env.IsDevelopment();
     }
 
     // GET /api/cart -> current cart, creating one (and setting the session
@@ -25,7 +27,7 @@ public class CartController : ControllerBase
         var (cart, isNewSession) = await CartAccessor.GetOrCreateCartAsync(_db, Request, ct);
         if (isNewSession)
         {
-            CartSession.SetSessionCookie(Response, cart.SessionId);
+            CartSession.SetSessionCookie(Response, cart.SessionId, _crossSiteCookie);
         }
 
         return Ok(ToDto(cart));
@@ -50,7 +52,7 @@ public class CartController : ControllerBase
         var (cart, isNewSession) = await CartAccessor.GetOrCreateCartAsync(_db, Request, ct);
         if (isNewSession)
         {
-            CartSession.SetSessionCookie(Response, cart.SessionId);
+            CartSession.SetSessionCookie(Response, cart.SessionId, _crossSiteCookie);
         }
 
         var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == request.ProductId);
@@ -93,7 +95,7 @@ public class CartController : ControllerBase
         var (cart, isNewSession) = await CartAccessor.GetOrCreateCartAsync(_db, Request, ct);
         if (isNewSession)
         {
-            CartSession.SetSessionCookie(Response, cart.SessionId);
+            CartSession.SetSessionCookie(Response, cart.SessionId, _crossSiteCookie);
         }
 
         var item = cart.Items.FirstOrDefault(i => i.Id == id);
@@ -121,7 +123,7 @@ public class CartController : ControllerBase
         var (cart, isNewSession) = await CartAccessor.GetOrCreateCartAsync(_db, Request, ct);
         if (isNewSession)
         {
-            CartSession.SetSessionCookie(Response, cart.SessionId);
+            CartSession.SetSessionCookie(Response, cart.SessionId, _crossSiteCookie);
         }
 
         var item = cart.Items.FirstOrDefault(i => i.Id == id);

@@ -21,15 +21,22 @@ internal static class CartSession
 
     public static string CreateSessionId() => Guid.NewGuid().ToString("N");
 
-    public static void SetSessionCookie(HttpResponse response, string sessionId)
+    // crossSite: true in every deployed environment - the frontend (Static
+    // Site) and backend (Web Service) live on two different Render
+    // subdomains, which is genuinely cross-SITE, not just cross-origin like
+    // localhost:4200 vs localhost:5131 in local dev. A cross-site cookie
+    // needs SameSite=None + Secure - browsers silently drop SameSite=Lax
+    // cookies on cross-site fetch/XHR calls (they're only sent on top-level
+    // navigation), which is exactly why the cart appeared to "forget"
+    // itself on every page load once deployed. Secure=true requires HTTPS,
+    // which local dev doesn't have, hence the flag rather than always-on.
+    public static void SetSessionCookie(HttpResponse response, string sessionId, bool crossSite)
     {
         response.Cookies.Append(CookieName, sessionId, new CookieOptions
         {
             HttpOnly = true,
-            SameSite = SameSiteMode.Lax,
-            // Local dev runs over plain http; Session 4/production should
-            // tighten this once the app is served over https.
-            Secure = false,
+            SameSite = crossSite ? SameSiteMode.None : SameSiteMode.Lax,
+            Secure = crossSite,
             IsEssential = true,
             Path = "/",
             Expires = DateTimeOffset.UtcNow.AddDays(30),

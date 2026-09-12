@@ -15,6 +15,7 @@ public class CheckoutController : ControllerBase
     private readonly StoreDbContext _db;
     private readonly IConfiguration _configuration;
     private readonly IPaymentIntentGateway _paymentIntentGateway;
+    private readonly bool _crossSiteCookie;
 
     // IPaymentIntentGateway (our own thin wrapper, see Services/) is injected
     // rather than constructing `new StripeClient(secretKey)` inline - that
@@ -23,11 +24,16 @@ public class CheckoutController : ControllerBase
     // configuration (Key Trap 5), just passed as an argument instead of
     // baked into a client at construction time. See guideline 07's
     // completion notes.
-    public CheckoutController(StoreDbContext db, IConfiguration configuration, IPaymentIntentGateway paymentIntentGateway)
+    public CheckoutController(
+        StoreDbContext db,
+        IConfiguration configuration,
+        IPaymentIntentGateway paymentIntentGateway,
+        IWebHostEnvironment env)
     {
         _db = db;
         _configuration = configuration;
         _paymentIntentGateway = paymentIntentGateway;
+        _crossSiteCookie = !env.IsDevelopment();
     }
 
     // POST /api/checkout/create-payment-intent -> {"email": "customer@example.com"}
@@ -46,7 +52,7 @@ public class CheckoutController : ControllerBase
         var (cart, isNewSession) = await CartAccessor.GetOrCreateCartAsync(_db, Request, ct);
         if (isNewSession)
         {
-            CartSession.SetSessionCookie(Response, cart.SessionId);
+            CartSession.SetSessionCookie(Response, cart.SessionId, _crossSiteCookie);
         }
 
         if (cart.Items.Count == 0)
