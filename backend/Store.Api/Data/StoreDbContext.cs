@@ -45,6 +45,11 @@ public class StoreDbContext : DbContext
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // GET /api/orders/{id} looks up an order's owning session - see
+        // Models/Order.cs for why SessionId lives on Order.
+        modelBuilder.Entity<Order>()
+            .HasIndex(o => o.SessionId);
+
         // OrderItem has no Product navigation property (it's a snapshot, not a
         // live reference) but still needs the FK constraint itself set to Restrict.
         modelBuilder.Entity<OrderItem>()
