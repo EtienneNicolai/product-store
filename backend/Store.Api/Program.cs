@@ -9,11 +9,29 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Minimal registration so `dotnet ef` tooling and the app itself can find the
-// DbContext - Session 4 builds the rest of the pipeline (CORS, webhook raw-body
-// config) around this without removing it. See CLAUDE.md's Session Boundaries note.
 builder.Services.AddDbContext<StoreDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("StoreDb")));
+
+// The cart depends on a session cookie, so the frontend origin must be
+// explicitly allowed with credentials - AllowAnyOrigin() and
+// AllowCredentials() are mutually exclusive in ASP.NET Core, so the origin
+// list has to be explicit (falls back to the Angular dev server if
+// Cors:AllowedOrigins isn't set; override it once a production frontend
+// origin exists).
+const string FrontendCorsPolicy = "FrontendCors";
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:4200" };
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(FrontendCorsPolicy, policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
@@ -25,6 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(FrontendCorsPolicy);
 app.MapControllers();
 
 app.Run();
