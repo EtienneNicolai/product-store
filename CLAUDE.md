@@ -110,6 +110,19 @@ by calling into the catalog controller.
    instead. If you're touching checkout code: don't replace this with
    `new PaymentIntentService(new StripeClient(secretKey))` inline again - that's exactly what
    makes `Store.Api.Tests` unable to test it without a real network call to Stripe.
+10. **The session cookie needs `SameSite=None; Secure=true` in every deployed environment, not
+    just `Secure` "once served over https" as originally assumed.** The frontend and backend
+    live on two different Render subdomains - genuinely cross-*site*, not just cross-origin like
+    `localhost:4200` vs `localhost:5131` in local dev. Browsers never send `SameSite=Lax`
+    cookies on cross-site `fetch`/XHR calls (only on top-level navigation), so with the original
+    `Lax` setting every API call from the deployed frontend silently arrived with no session
+    cookie at all - each request looked like a brand new visitor, and the cart appeared to erase
+    itself on every page load. `CartController`/`CheckoutController` decide via injected
+    `IWebHostEnvironment.IsDevelopment()`, not `Request.IsHttps` (unreliable behind Render's
+    proxy without trusting forwarded headers, which isn't configured here) - local dev keeps
+    `Lax`/non-secure, everything else gets `None`/secure. Caught by a real-browser check against
+    the live deployed site; a curl-only check wouldn't have caught this at all, since curl
+    doesn't enforce `SameSite` the way a real browser does.
 
 ## Running the app locally
 ```powershell
