@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Store.Api.Data;
 using Store.Api.Dtos;
 using Store.Api.Models;
+using Store.Api.Services;
 using Stripe;
 
 namespace Store.Api.Controllers;
@@ -13,11 +14,20 @@ public class CheckoutController : ControllerBase
 {
     private readonly StoreDbContext _db;
     private readonly IConfiguration _configuration;
+    private readonly IPaymentIntentGateway _paymentIntentGateway;
 
-    public CheckoutController(StoreDbContext db, IConfiguration configuration)
+    // IPaymentIntentGateway (our own thin wrapper, see Services/) is injected
+    // rather than constructing `new StripeClient(secretKey)` inline - that
+    // made this controller impossible to unit test without a real network
+    // call to Stripe. The secret key is still read per-request from
+    // configuration (Key Trap 5), just passed as an argument instead of
+    // baked into a client at construction time. See guideline 07's
+    // completion notes.
+    public CheckoutController(StoreDbContext db, IConfiguration configuration, IPaymentIntentGateway paymentIntentGateway)
     {
         _db = db;
         _configuration = configuration;
+        _paymentIntentGateway = paymentIntentGateway;
     }
 
     // POST /api/checkout/create-payment-intent -> {"email": "customer@example.com"}
@@ -68,23 +78,24 @@ public class CheckoutController : ControllerBase
                 title: "Stripe not configured");
         }
 
-        var paymentIntentService = new PaymentIntentService(new StripeClient(secretKey));
-
         PaymentIntent intent;
         try
         {
-            intent = await paymentIntentService.CreateAsync(new PaymentIntentCreateOptions
-            {
-                Amount = totalCents,
-                Currency = currency,
-                ReceiptEmail = request.Email,
-                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions { Enabled = true },
-                Metadata = new Dictionary<string, string>
+            intent = await _paymentIntentGateway.CreateAsync(
+                new PaymentIntentCreateOptions
                 {
-                    ["cartId"] = cart.Id.ToString(),
-                    ["sessionId"] = cart.SessionId,
+                    Amount = totalCents,
+                    Currency = currency,
+                    ReceiptEmail = request.Email,
+                    AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions { Enabled = true },
+                    Metadata = new Dictionary<string, string>
+                    {
+                        ["cartId"] = cart.Id.ToString(),
+                        ["sessionId"] = cart.SessionId,
+                    },
                 },
-            }, cancellationToken: ct);
+                secretKey,
+                ct);
         }
         catch (StripeException ex)
         {

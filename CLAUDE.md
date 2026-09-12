@@ -24,8 +24,13 @@ backend/
     Controllers/     - ProductsController, CartController, CheckoutController,
                        CartSessionSupport (shared session-cookie helper)
     Dtos/             - request/response shapes for cart and checkout endpoints
+    Services/          - IPaymentIntentGateway (Stripe.net wrapper, makes checkout
+                         testable - see guideline 07's completion notes)
     Program.cs        - DI, CORS, middleware, Stripe webhook raw-body config
-  Store.Api.Tests/    - xUnit tests
+                        (also: public partial class Program {} at the bottom, for
+                        WebApplicationFactory<Program> in tests)
+  Store.Api.Tests/    - xUnit + Moq + WebApplicationFactory integration tests,
+                        in-memory SQLite (not the dev store.db, never real Stripe)
 frontend/
   src/app/
     products/          - listing + detail
@@ -88,6 +93,12 @@ by calling into the catalog controller.
    (reading 'edgesOut')`) on this Angular version's `vitest`/`@vitest/browser-playwright` peer
    dependency graph. The scaffolded app uses Vitest (not Karma/Jasmine) as its test runner -
    relevant for Session 6's Angular component tests.
+9. **`CheckoutController` depends on `IPaymentIntentGateway` (`Services/`), not Stripe.net's
+   `PaymentIntentService` directly.** This Stripe.net version (52.4.2) has no
+   `IPaymentIntentService` interface to mock, so the project owns a thin wrapper interface
+   instead. If you're touching checkout code: don't replace this with
+   `new PaymentIntentService(new StripeClient(secretKey))` inline again - that's exactly what
+   makes `Store.Api.Tests` unable to test it without a real network call to Stripe.
 
 ## Running the app locally
 ```powershell
@@ -106,8 +117,13 @@ http://localhost:4200.
 
 ## Running tests
 ```powershell
+# Backend
 cd backend/Store.Api.Tests
 dotnet test
+
+# Frontend
+cd frontend
+ng test --watch=false
 ```
 
 ## Stripe local testing

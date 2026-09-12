@@ -18,12 +18,16 @@ export class Checkout {
 
   protected readonly paymentElementRef = viewChild<ElementRef<HTMLDivElement>>('paymentElement');
 
-  protected readonly email = signal('');
-  protected readonly stage = signal<'email' | 'payment'>('email');
-  protected readonly submittingEmail = signal(false);
+  // Public (not protected): checkout.spec.ts drives these directly rather
+  // than through the DOM, since the Stripe.js mounting side effects make
+  // full template-driven testing more trouble than it's worth for what
+  // guideline 07 actually asks for here.
+  readonly email = signal('');
+  readonly stage = signal<'email' | 'payment'>('email');
+  readonly submittingEmail = signal(false);
   protected readonly submittingPayment = signal(false);
   protected readonly paymentElementReady = signal(false);
-  protected readonly error = signal<string | null>(null);
+  readonly error = signal<string | null>(null);
   // No real Stripe account exists in this environment yet - see CLAUDE.md and
   // guideline 06's completion notes. Shown as a real, honest state rather
   // than pretending checkout works end to end.
