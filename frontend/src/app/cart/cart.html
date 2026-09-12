@@ -1,0 +1,41 @@
+<h1>Your cart</h1>
+
+@if (loading()) {
+  <p class="status">Loading...</p>
+} @else if (error()) {
+  <p class="status status--error">{{ error() }}</p>
+}
+
+@if (!loading() && cart(); as cart) {
+  @if (cart.items.length === 0) {
+    <p class="status">Your cart is empty. <a routerLink="/products">Browse products</a></p>
+  } @else {
+    <ul class="cart-list">
+      @for (item of cart.items; track item.id) {
+        <li class="cart-item">
+          <span class="cart-item__name">{{ item.product.name }}</span>
+          <span class="cart-item__price">{{ formatPrice(item.product.priceCents, 'aud') }}</span>
+          <input
+            type="number"
+            min="1"
+            [value]="item.quantity"
+            [disabled]="busyItemId() === item.id"
+            (change)="updateQuantity(item.id, +$any($event.target).value)"
+          />
+          <button
+            type="button"
+            class="danger"
+            (click)="removeItem(item.id)"
+            [disabled]="busyItemId() === item.id"
+          >
+            Remove
+          </button>
+        </li>
+      }
+    </ul>
+
+    <p class="cart-total">Total: {{ formatPrice(totalCents(), 'aud') }}</p>
+
+    <a routerLink="/checkout" class="button-link">Proceed to checkout</a>
+  }
+}

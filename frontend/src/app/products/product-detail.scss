@@ -1,0 +1,35 @@
+.product-detail {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+
+  &__image {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  &__price {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  &__add {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 1rem;
+
+    input {
+      width: 5rem;
+    }
+  }
+}

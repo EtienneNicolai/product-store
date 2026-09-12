@@ -118,7 +118,11 @@ public class CheckoutController : ControllerBase
         _db.Orders.Add(order);
         await _db.SaveChangesAsync(ct);
 
-        return Ok(new CreatePaymentIntentResponse(intent.ClientSecret, totalCents));
+        // OrderId lets the frontend build a Stripe return_url pointing at
+        // /order-confirmation/{orderId} and fetch it via GET /api/orders/{id}
+        // afterward - added for Session 5, not part of guideline 01's original
+        // contract (see guideline 06's completion notes).
+        return Ok(new CreatePaymentIntentResponse(intent.ClientSecret, totalCents, order.Id));
     }
 
     // POST /api/checkout/webhook -> raw Stripe event payload.

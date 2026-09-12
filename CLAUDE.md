@@ -31,7 +31,11 @@ frontend/
     products/          - listing + detail
     cart/               - cart view
     checkout/            - Stripe Payment Element integration
-    order-confirmation/   - post-payment confirmation page
+    order-confirmation/   - post-payment confirmation page, polls order status
+    services/             - ApiService (all HTTP calls), models, error/format helpers
+  src/environments/       - environment.ts / environment.prod.ts (not scaffolded by
+                            default in Angular 21 - added manually with angular.json
+                            fileReplacements, see guideline 06's completion notes)
 guidelines/            - session-by-session implementation guides
 ```
 

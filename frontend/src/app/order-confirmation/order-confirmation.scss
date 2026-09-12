@@ -1,0 +1,20 @@
+.order-summary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 1rem;
+  max-width: 320px;
+
+  dt {
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.order-items {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}

@@ -1,0 +1,37 @@
+<h1>Order confirmation</h1>
+
+@if (loading()) {
+  <p class="status">Checking your order...</p>
+} @else if (error()) {
+  <p class="status status--error">{{ error() }}</p>
+  <a routerLink="/products">Back to products</a>
+} @else if (order(); as order) {
+  @switch (order.status) {
+    @case ('paid') {
+      <p class="status">Payment received. Thank you!</p>
+    }
+    @case ('failed') {
+      <p class="status status--error">This payment failed. Please try again.</p>
+    }
+    @default {
+      <p class="status">Payment is still processing - this page will update automatically.</p>
+    }
+  }
+
+  <dl class="order-summary">
+    <dt>Order</dt>
+    <dd>#{{ order.id }}</dd>
+    <dt>Status</dt>
+    <dd>{{ order.status }}</dd>
+    <dt>Total</dt>
+    <dd>{{ formatPrice(order.totalCents, 'aud') }}</dd>
+  </dl>
+
+  <ul class="order-items">
+    @for (item of order.items; track item.productId) {
+      <li>{{ item.quantity }} &times; {{ item.productName }} ({{ formatPrice(item.unitPriceCents, 'aud') }} each)</li>
+    }
+  </ul>
+
+  <a routerLink="/products">Continue shopping</a>
+}

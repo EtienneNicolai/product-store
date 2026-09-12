@@ -5,7 +5,7 @@ namespace Store.Api.Dtos;
 
 public record CreatePaymentIntentRequest(string Email);
 
-public record CreatePaymentIntentResponse(string ClientSecret, int TotalCents);
+public record CreatePaymentIntentResponse(string ClientSecret, int TotalCents, int OrderId);
 
 public record OrderItemDto(int ProductId, string ProductName, int UnitPriceCents, int Quantity);
 

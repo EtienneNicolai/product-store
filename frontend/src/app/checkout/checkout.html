@@ -1,0 +1,42 @@
+<h1>Checkout</h1>
+
+@if (!stripeConfigured) {
+  <p class="status status--error">
+    Stripe is not configured in this environment yet (no publishable key set) - checkout below
+    is real and will call the backend, but payment confirmation will not complete until a real
+    test-mode Stripe account is connected.
+  </p>
+}
+
+@if (stage() === 'email') {
+  <form (submit)="$event.preventDefault(); submitEmail()">
+    <label for="email">Email</label>
+    <input id="email" type="email" [(ngModel)]="email" name="email" required />
+
+    @if (error()) {
+      <p class="status status--error">{{ error() }}</p>
+    }
+
+    <button type="submit" [disabled]="submittingEmail()">
+      {{ submittingEmail() ? 'Starting checkout...' : 'Continue to payment' }}
+    </button>
+  </form>
+}
+
+@if (stage() === 'payment') {
+  <div class="payment-stage">
+    <div #paymentElement class="payment-element"></div>
+
+    @if (!paymentElementReady()) {
+      <p class="status">Loading payment form...</p>
+    }
+
+    @if (error()) {
+      <p class="status status--error">{{ error() }}</p>
+    }
+
+    <button type="button" (click)="confirmPayment()" [disabled]="!paymentElementReady() || submittingPayment()">
+      {{ submittingPayment() ? 'Processing...' : 'Pay now' }}
+    </button>
+  </div>
+}

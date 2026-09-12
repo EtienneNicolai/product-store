@@ -99,9 +99,11 @@ Response `400` if `quantity > product.stockQuantity`
 
 ### Checkout (session-cookie based, no auth)
 **POST /api/checkout/create-payment-intent** -> `{"email": "customer@example.com"}`
-Response `200`: `{"clientSecret": "pi_..._secret_...", "totalCents": 1000}`
+Response `200`: `{"clientSecret": "pi_..._secret_...", "totalCents": 1000, "orderId": 1}`
 Creates a Stripe PaymentIntent for the current cart's total and a matching `Order` row with
-`status = "pending"`. Does not decrement stock yet (see Key Trap 6 in CLAUDE.md).
+`status = "pending"`. Does not decrement stock yet (see Key Trap 6 in CLAUDE.md). `orderId` was
+added in Session 5 - the frontend needs it for Stripe's `return_url` and to poll
+`GET /api/orders/{id}` afterward.
 
 **POST /api/checkout/webhook** -> raw Stripe event payload
 No response body contract - this is Stripe calling us, not the frontend. On a verified

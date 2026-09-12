@@ -1,0 +1,30 @@
+<h1>Products</h1>
+
+@if (loading()) {
+  <p class="status">Loading products...</p>
+} @else if (error()) {
+  <p class="status status--error">{{ error() }}</p>
+} @else if (products().length === 0) {
+  <p class="status">No products available right now.</p>
+} @else {
+  <ul class="product-grid">
+    @for (product of products(); track product.id) {
+      <li class="product-card">
+        <img [src]="product.imageUrl" [alt]="product.name" class="product-card__image" />
+        <a [routerLink]="['/products', product.slug]" class="product-card__name">{{ product.name }}</a>
+        <p class="product-card__price">{{ formatPrice(product.priceCents, product.currency) }}</p>
+        @if (product.stockQuantity === 0) {
+          <p class="status status--error">Out of stock</p>
+        } @else {
+          <button
+            type="button"
+            (click)="quickAdd(product)"
+            [disabled]="addingId() === product.id"
+          >
+            {{ addingId() === product.id ? 'Adding...' : addedId() === product.id ? 'Added!' : 'Add to cart' }}
+          </button>
+        }
+      </li>
+    }
+  </ul>
+}

@@ -1,1 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles - kept deliberately plain. This app's job is to demonstrate
+   working functionality (cart, checkout, Stripe), not a design system. */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #1a1a1a;
+  background: #fafafa;
+}
+
+h1,
+h2 {
+  margin-top: 0;
+}
+
+a {
+  color: #1a1a1a;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid #1a1a1a;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.secondary {
+    background: #fff;
+    color: #1a1a1a;
+  }
+
+  &.danger {
+    background: #fff;
+    color: #b91c1c;
+    border-color: #b91c1c;
+  }
+}
+
+.button-link {
+  display: inline-block;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid #1a1a1a;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+input,
+select {
+  font: inherit;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.status {
+  color: #555;
+}
+
+.status--error {
+  color: #b91c1c;
+  font-weight: 600;
+}
