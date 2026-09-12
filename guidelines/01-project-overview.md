@@ -52,6 +52,7 @@ public class Order
     public string Status { get; set; } = "pending";   // "pending" | "paid" | "failed"
     public int TotalCents { get; set; }
     public string CustomerEmail { get; set; } = null!;
+    public string SessionId { get; set; } = null!;    // added in Session 3, see note below
     public DateTime CreatedAt { get; set; }
     public List<OrderItem> Items { get; set; } = new();
 }
@@ -66,6 +67,11 @@ public class OrderItem
     public int Quantity { get; set; }
 }
 ```
+
+`Order.SessionId` wasn't in the original model set - Session 3 added it (with a follow-up migration)
+because `GET /api/orders/{id}` needs something to compare the requesting session cookie against to
+know whether an order belongs to the caller. Without it, "404 if the order doesn't belong to the
+requesting session" in the API Contracts section below has no way to actually be implemented.
 
 ## API Contracts
 All routes use the `/api/` prefix.

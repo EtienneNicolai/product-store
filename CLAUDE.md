@@ -21,7 +21,9 @@ backend/
     Models/         - Product, Cart, CartItem, Order, OrderItem
     Data/           - StoreDbContext
     Migrations/      - EF Core migrations (default `dotnet ef` output location, not under Data/)
-    Controllers/     - ProductsController, CartController, CheckoutController
+    Controllers/     - ProductsController, CartController, CheckoutController,
+                       CartSessionSupport (shared session-cookie helper)
+    Dtos/             - request/response shapes for cart and checkout endpoints
     Program.cs        - DI, CORS, middleware, Stripe webhook raw-body config
   Store.Api.Tests/    - xUnit tests
 frontend/

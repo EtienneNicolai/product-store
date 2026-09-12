@@ -28,3 +28,26 @@ exists to practice - take the time to get the webhook handling right.
 ## Depends on
 Session 1 (data layer) only. Runs in parallel with the catalog API session - does not import
 anything from `ProductsController`.
+
+## Completion notes
+- Session cookie handling is a plain opaque cookie (`session_id`, a GUID), read/set directly via
+  `HttpContext.Request/Response.Cookies` in a small shared `CartSession`/`CartAccessor` helper -
+  not ASP.NET session-state middleware. Every cart and checkout endpoint goes through the same
+  get-or-create helper, not just `GET /api/cart` as the guideline states literally - a visitor
+  who calls `POST /api/cart/items` first without ever calling `GET /api/cart` still needs a
+  session.
+- Added `Order.SessionId` (see guideline 01) with its own migration, since `GET /api/orders/{id}`
+  has nothing else to compare the requesting cookie against.
+- The webhook handler no-ops on an already-`"paid"` order before doing anything else, to guard
+  against Stripe's documented at-least-once event redelivery - not explicitly required by this
+  guideline, but a real correctness gap without it (a redelivered event would double-decrement
+  stock).
+- The Stripe secret key and webhook secret are read via `IConfiguration["Stripe:..."]` at the
+  point of use in the controllers, not as a `Program.cs` global assignment - keeps this session's
+  changes out of Session 4's file. Both are unset in this environment (no Stripe account exists
+  yet); `create-payment-intent` fails with a clear 500 "Stripe not configured" response rather
+  than crashing, and the webhook does the same for a missing webhook secret. Verified live:
+  cart endpoints and the webhook's signature verification (both accept and reject, using
+  Stripe.net's real HMAC scheme via a manually-inserted pending order) work end to end without
+  any real Stripe credentials - `create-payment-intent` itself cannot be live-verified until a
+  real test-mode secret key exists.
