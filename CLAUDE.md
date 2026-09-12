@@ -19,7 +19,8 @@ specific set of skill gaps: real .NET/EF depth, Angular, and a genuine payment i
 backend/
   Store.Api/
     Models/         - Product, Cart, CartItem, Order, OrderItem
-    Data/           - StoreDbContext, migrations
+    Data/           - StoreDbContext
+    Migrations/      - EF Core migrations (default `dotnet ef` output location, not under Data/)
     Controllers/     - ProductsController, CartController, CheckoutController
     Program.cs        - DI, CORS, middleware, Stripe webhook raw-body config
   Store.Api.Tests/    - xUnit tests

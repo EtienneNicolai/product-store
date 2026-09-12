@@ -112,8 +112,10 @@ view someone else's purchase).
 - **Session 2** owns: `Controllers/ProductsController.cs` - parallel with Session 3
 - **Session 3** owns: `Controllers/CartController.cs`, `Controllers/CheckoutController.cs`,
   the Stripe SDK integration - parallel with Session 2
-- **Session 4** owns: `Program.cs` - DI registration, CORS policy, the webhook route's raw-body
-  middleware configuration, Swagger setup
+- **Session 4** owns: `Program.cs` - CORS policy, the webhook route's raw-body middleware
+  configuration, Swagger setup. Session 1 already added the minimal `AddDbContext<StoreDbContext>`
+  registration (EF tooling needs it to run migrations at all) - build around that line, don't
+  remove it.
 - **Session 5** owns: `frontend/` - all Angular components, services, routing
 - **Session 6** owns: `Store.Api.Tests/` - xUnit tests, mocking the Stripe client so tests do
   not make real API calls
