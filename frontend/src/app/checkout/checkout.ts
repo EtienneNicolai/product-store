@@ -92,6 +92,19 @@ export class Checkout {
     this.submittingPayment.set(true);
     this.error.set(null);
 
+    // Required before confirmPayment() - Stripe.js validates and collects
+    // the entered payment details here first. Without this call,
+    // confirmPayment() rejects immediately (before making any network
+    // request at all) rather than surfacing a useful error - caught live
+    // against the real deployed site, where the "Pay now" button did
+    // nothing visible and no confirm request ever reached Stripe.
+    const { error: submitError } = await this.elements.submit();
+    if (submitError) {
+      this.submittingPayment.set(false);
+      this.error.set(submitError.message ?? 'Please check your payment details and try again.');
+      return;
+    }
+
     const { error } = await this.stripe.confirmPayment({
       elements: this.elements,
       confirmParams: {
