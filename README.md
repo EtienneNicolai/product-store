@@ -5,7 +5,11 @@ embedded in the app - not a redirect to a Stripe-hosted page). Built to close a 
 skill gaps: real .NET/EF depth, Angular, and a genuine payment integration, not a fake "add to
 cart" button.
 
-**Status:** In progress. See `guidelines/` for the full session-by-session build plan.
+**Status:** All 6 build sessions complete - catalog, cart, checkout, API wiring, Angular
+frontend, and automated tests. Not deployed anywhere yet, and checkout can't be exercised fully
+end to end until a real Stripe test-mode account is connected (see `CLAUDE.md`). See
+`guidelines/` for the full session-by-session build plan and what actually changed along the
+way.
 
 ## What it does
 
@@ -35,14 +39,29 @@ dotnet run
 
 # Frontend (separate terminal)
 cd frontend
-npm install
+npm install --legacy-peer-deps
 ng serve
 ```
 
 Backend on http://localhost:5000 (or whatever `launchSettings.json` assigns), frontend on
-http://localhost:4200.
+http://localhost:4200. `--legacy-peer-deps` is required here - see `CLAUDE.md` Key Trap 8.
 
 Requires a Stripe account (test mode) - see `CLAUDE.md` for how keys are configured.
+
+## Running tests
+
+```powershell
+# Backend
+cd backend/Store.Api.Tests
+dotnet test
+
+# Frontend
+cd frontend
+ng test --watch=false
+```
+
+Backend tests never hit a real database or make a real Stripe API call - see `CLAUDE.md` and
+`guidelines/07-testing.md` for how.
 
 ## Development workflow
 
