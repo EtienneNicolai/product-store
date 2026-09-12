@@ -7,12 +7,15 @@ specific set of skill gaps: real .NET/EF depth, Angular, and a genuine payment i
 
 ## Tech Stack
 - **Backend**: ASP.NET Core Web API (.NET 8) + Entity Framework Core
-- **Database**: SQLite locally (file-based, zero install), SQL Server / Azure SQL in
-  production - see Key Trap 7 for how migrations handle the provider switch
+- **Database**: SQLite locally (file-based, zero install), Postgres in production - see Key
+  Trap 7 for how migrations handle the provider switch, and README for why production ended up
+  on Postgres/Render rather than the originally planned SQL Server/Azure SQL
 - **Payments**: Stripe.NET SDK (Payment Intents API, not the older Checkout redirect, so the
   Angular app owns the actual checkout UI)
 - **Frontend**: Angular (latest stable)
 - **Auth**: none in v1 - carts are anonymous, keyed by a session cookie
+- **Deployment**: Render - backend as a Docker-based Web Service (Render has no native .NET
+  runtime), frontend as a Static Site, Postgres as a managed database
 
 ## Folder layout
 ```
@@ -78,14 +81,22 @@ by calling into the catalog controller.
    secrets locally and a proper secret store in production, never committed to the repo.
 6. **Decrement stock only after the webhook confirms payment succeeded**, not when the
    PaymentIntent is first created. Creating a PaymentIntent does not mean the customer has paid.
-7. **EF Core migrations are provider-specific - a SQLite migration will not apply to SQL
-   Server.** Local dev targets SQLite (no LocalDB/SQL Server Express install available), but
-   production targets SQL Server/Azure SQL as originally planned. The model classes and
-   `OnModelCreating` config in `StoreDbContext` are the single source of truth; when it's time
-   to deploy, generate a *separate* migration set targeting `Microsoft.EntityFrameworkCore.
-   SqlServer` rather than trying to reuse the SQLite one. Money-as-cents (Key Trap 1) already
-   avoids the worst cross-provider pitfall (decimal precision), which is most of why this
-   two-provider setup is workable at all.
+7. **EF Core migrations are provider-specific - a SQLite migration will not apply to Postgres
+   (or SQL Server).** Local dev targets SQLite (no LocalDB/SQL Server Express install available)
+   and production targets Postgres on Render (Azure's signup friction ruled it out - see
+   guideline 01 and README for why the plan changed from the original SQL Server/Azure SQL
+   target). Two providers, same `StoreDbContext`/`OnModelCreating`, but genuinely different
+   migration *mechanisms*, not just different SQL: SQLite has no checked-in migrations at all -
+   `Program.cs` calls `Database.EnsureCreated()` for it, since the local `store.db` is disposable
+   dev data with no history worth versioning. Postgres has a real migration set
+   (`Migrations/`, generated with `Database:Provider=Postgres` set, targeting `Npgsql.
+   EntityFrameworkCore.PostgreSQL`) applied via `Database.Migrate()` at startup - both paths run
+   automatically when the app starts, no separate manual step needed either locally or on
+   Render. Money-as-cents (Key Trap 1) already avoids the worst cross-provider pitfall (decimal
+   precision), which is most of why running two providers off one model is workable at all.
+   If a third provider ever needs its own migration set, don't try to add it to this same
+   `Migrations/` folder - a single `DbContext` can only have one properly-recognised model
+   snapshot in one assembly; Postgres's is already what lives there.
 8. **Use `@angular/cli@21` (the `v21-lts` dist-tag), not `@latest`.** `@latest` resolves to a
    version requiring a newer Node than what's installed here; `21` is the current LTS and works
    fine with the installed Node 22.19. Separately, `npm install` in `frontend/` needs

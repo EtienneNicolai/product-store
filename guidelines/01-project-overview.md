@@ -143,7 +143,7 @@ Sessions must not import from each other's controllers.
 | Package | Used for | Verify |
 |---|---|---|
 | `Microsoft.EntityFrameworkCore.Sqlite` | EF Core + SQLite provider (local dev - see CLAUDE.md Key Trap 7) | `dotnet list package` |
-| `Microsoft.EntityFrameworkCore.SqlServer` | EF Core + SQL Server provider (added when a production migration set is generated) | `dotnet list package` |
+| `Npgsql.EntityFrameworkCore.PostgreSQL` | EF Core + Postgres provider (production, on Render - see CLAUDE.md Key Trap 7) | `dotnet list package` |
 | `Microsoft.EntityFrameworkCore.Tools` | Migrations | `dotnet ef --version` |
 | `Stripe.net` | Stripe API client | `dotnet list package` |
 | `Microsoft.AspNetCore.Cors` | CORS for the Angular origin | included in ASP.NET Core |
@@ -178,6 +178,7 @@ Then:
 1. Create a Stripe account (test mode) and note the publishable and secret keys
 2. Set the secret key via `dotnet user-secrets` locally, never in `appsettings.json`
 3. Set the publishable key in `frontend/src/environments/environment.ts`
-4. Run `dotnet ef database update` and confirm the SQLite file gets created before any session
-   begins (no LocalDB/SQL Server Express available in this environment - see CLAUDE.md Key
-   Trap 7 for how production's SQL Server target is handled separately)
+4. Just run `dotnet run` - the app creates its own local SQLite database on startup
+   (`Database.EnsureCreated()`), no separate migration step needed (no LocalDB/SQL Server
+   Express available in this environment either - see CLAUDE.md Key Trap 7 for how production's
+   Postgres target is handled separately, on Render)

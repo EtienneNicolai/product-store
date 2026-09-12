@@ -1,6 +1,9 @@
 export const environment = {
   production: true,
-  // Placeholder until the API and Stripe account are actually deployed.
-  apiUrl: 'https://api.example.com',
+  // Render URLs are deterministic from the service name chosen at creation
+  // time (https://<service-name>.onrender.com) - this assumes the backend
+  // Web Service is named "product-store-api". If it's named differently,
+  // update this to match.
+  apiUrl: 'https://product-store-api.onrender.com',
   stripePublishableKey: '',
 };
