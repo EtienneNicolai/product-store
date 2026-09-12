@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
-  // Render URLs are deterministic from the service name chosen at creation
-  // time (https://<service-name>.onrender.com) - this assumes the backend
-  // Web Service is named "product-store-api". If it's named differently,
-  // update this to match.
-  apiUrl: 'https://product-store-api.onrender.com',
+  // Render appends a random suffix when the exact requested service name is
+  // already taken by someone else - "product-store-api" was, so this isn't
+  // the plain deterministic URL originally assumed. Confirmed live (real
+  // Kestrel/ASP.NET Core response, real seeded product data from Neon).
+  apiUrl: 'https://product-store-api-g9ol.onrender.com',
   stripePublishableKey: '',
 };
