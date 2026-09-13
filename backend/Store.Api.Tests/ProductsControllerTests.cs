@@ -20,10 +20,10 @@ public class ProductsControllerTests : IClassFixture<StoreApiFactory>
 
         var products = await response.Content.ReadFromJsonAsync<List<ProductSummaryResponse>>(Json.Options);
 
-        // Seed data has 6 products, one deliberately inactive/out of stock
+        // Seed data has 11 products, one deliberately inactive/out of stock
         // (discontinued-keychain) - it must never appear here.
         Assert.NotNull(products);
-        Assert.Equal(5, products!.Count);
+        Assert.Equal(10, products!.Count);
         Assert.DoesNotContain(products, p => p.Slug == "discontinued-keychain");
     }
 
