@@ -12,6 +12,7 @@
       <li class="product-card">
         <img [src]="product.imageUrl" [alt]="product.name" class="product-card__image" />
         <a [routerLink]="['/products', product.slug]" class="product-card__name">{{ product.name }}</a>
+        <p class="product-card__description">{{ product.description }}</p>
         <p class="product-card__price">{{ formatPrice(product.priceCents, product.currency) }}</p>
         @if (product.stockQuantity === 0) {
           <p class="status status--error">Out of stock</p>

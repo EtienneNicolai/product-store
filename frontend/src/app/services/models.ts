@@ -6,6 +6,7 @@ export interface ProductSummary {
   id: number;
   slug: string;
   name: string;
+  description: string;
   priceCents: number;
   currency: string;
   imageUrl: string;
@@ -13,7 +14,6 @@ export interface ProductSummary {
 }
 
 export interface Product extends ProductSummary {
-  description: string;
   isActive: boolean;
 }
 

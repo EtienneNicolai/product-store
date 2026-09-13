@@ -17,7 +17,9 @@ public class ProductsController : ControllerBase
 
     // GET /api/products -> list of active products only.
     // Projected to the shape in guideline 01's API Contracts section - list view is
-    // intentionally slimmer than the detail view (no Description/IsActive).
+    // intentionally slimmer than the detail view (no IsActive). Description was
+    // added to this projection for the "comfortable" UI rework, which shows a
+    // short excerpt on each catalog card, not just the detail page.
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
@@ -28,6 +30,7 @@ public class ProductsController : ControllerBase
                 id = p.Id,
                 slug = p.Slug,
                 name = p.Name,
+                description = p.Description,
                 priceCents = p.PriceCents,
                 currency = p.Currency,
                 imageUrl = p.ImageUrl,

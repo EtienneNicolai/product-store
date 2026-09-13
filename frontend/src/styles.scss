@@ -1,5 +1,28 @@
-/* Global styles - kept deliberately plain. This app's job is to demonstrate
-   working functionality (cart, checkout, Stripe), not a design system. */
+/* "Comfortable" theme: warm neutrals, a soft terracotta accent, rounded
+   corners, gentle shadows instead of hard borders. Fraunces (a warm serif)
+   for headings, Nunito (a rounded, friendly sans) for everything else. */
+
+:root {
+  --color-bg: #faf3e9;
+  --color-surface: #fffcf7;
+  --color-text: #3e2f23;
+  --color-text-muted: #7a6a58;
+  --color-border: #e8dcc8;
+  --color-accent: #c46a3e;
+  --color-accent-hover: #a8562f;
+  --color-accent-contrast: #fffcf7;
+  --color-danger: #b5533f;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --shadow-soft: 0 2px 10px rgba(62, 47, 35, 0.07);
+  --shadow-lifted: 0 10px 24px rgba(62, 47, 35, 0.12);
+
+  --font-heading: "Fraunces", Georgia, serif;
+  --font-body: "Nunito", system-ui, -apple-system, sans-serif;
+}
 
 * {
   box-sizing: border-box;
@@ -7,71 +30,116 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  color: #1a1a1a;
-  background: #fafafa;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.6;
 }
 
 h1,
-h2 {
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
   margin-top: 0;
 }
 
 a {
-  color: #1a1a1a;
+  color: var(--color-accent);
 }
 
 button {
   font: inherit;
   cursor: pointer;
-  border: 1px solid #1a1a1a;
-  background: #1a1a1a;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  padding: 0.65rem 1.25rem;
+  font-weight: 700;
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-soft);
+
+  &:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+    box-shadow: var(--shadow-lifted);
+    transform: translateY(-1px);
+  }
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.55;
     cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
   }
 
   &.secondary {
-    background: #fff;
-    color: #1a1a1a;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
   }
 
   &.danger {
-    background: #fff;
-    color: #b91c1c;
-    border-color: #b91c1c;
+    background: transparent;
+    color: var(--color-danger);
+    box-shadow: none;
+    padding: 0.5rem 0.9rem;
+
+    &:hover:not(:disabled) {
+      background: rgba(181, 83, 63, 0.1);
+      box-shadow: none;
+      transform: none;
+    }
   }
 }
 
 .button-link {
   display: inline-block;
   font: inherit;
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
-  border: 1px solid #1a1a1a;
-  background: #1a1a1a;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  padding: 0.65rem 1.25rem;
+  box-shadow: var(--shadow-soft);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+
+  &:hover {
+    background: var(--color-accent-hover);
+    box-shadow: var(--shadow-lifted);
+    transform: translateY(-1px);
+  }
 }
 
 input,
 select {
   font: inherit;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(196, 106, 62, 0.15);
+  }
 }
 
 .status {
-  color: #555;
+  color: var(--color-text-muted);
 }
 
 .status--error {
-  color: #b91c1c;
-  font-weight: 600;
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.status--success {
+  color: #4f7a52;
+  font-weight: 700;
 }

@@ -8,7 +8,7 @@
 } @else if (order(); as order) {
   @switch (order.status) {
     @case ('paid') {
-      <p class="status">Payment received. Thank you!</p>
+      <p class="status status--success">Payment received - thank you, your order is on its way!</p>
     }
     @case ('failed') {
       <p class="status status--error">This payment failed. Please try again.</p>

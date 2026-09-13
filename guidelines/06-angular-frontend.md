@@ -55,3 +55,12 @@ anything to talk to).
   screenshots. This is the expected, honest state until a real Stripe account exists; the code
   path itself (create-payment-intent -> mount Payment Element -> confirmPayment) is real and
   wired correctly, just untestable end-to-end without real keys.
+- **"Comfortable" visual redesign** (post-launch, once the catalog grew to 10 products): warm
+  cream/terracotta palette, Fraunces (serif) for headings + Nunito (rounded sans) for body,
+  defined as CSS custom properties in `styles.scss`. The Payment Element itself is themed to
+  match via Stripe's Appearance API (`checkout.ts`'s `STRIPE_APPEARANCE` constant) - CSS alone
+  can't reach into Stripe's iframe, so the same colors/radius are duplicated there as literal
+  values rather than reading the CSS variables. Verified locally with real Stripe test keys set
+  via `dotnet user-secrets` specifically to screenshot the themed payment form - the "Stripe not
+  configured" honest-fallback state (see above) meant the Payment Element was never actually
+  visible locally before this.

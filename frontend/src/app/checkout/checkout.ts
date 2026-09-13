@@ -1,9 +1,48 @@
 import { Component, ElementRef, Injector, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
+import { loadStripe, Stripe, StripeElements, type Appearance } from '@stripe/stripe-js';
 import { ApiService } from '../services/api.service';
 import { extractErrorMessage } from '../services/error';
 import { environment } from '../../environments/environment';
+
+// Themes the actual Stripe Payment Element (rendered inside Stripe's own
+// iframe, so plain CSS can't reach it) to match styles.scss's "comfortable"
+// palette - literal values here since Stripe's Appearance API can't read our
+// CSS custom properties, only accepts values passed in at elements() time.
+const STRIPE_APPEARANCE: Appearance = {
+  theme: 'stripe',
+  variables: {
+    colorPrimary: '#c46a3e',
+    colorBackground: '#fffcf7',
+    colorText: '#3e2f23',
+    colorTextSecondary: '#7a6a58',
+    colorDanger: '#b5533f',
+    fontFamily: 'Nunito, system-ui, sans-serif',
+    borderRadius: '8px',
+    spacingUnit: '4px',
+  },
+  rules: {
+    '.Input': {
+      border: '1px solid #e8dcc8',
+      boxShadow: 'none',
+    },
+    '.Input:focus': {
+      border: '1px solid #c46a3e',
+      boxShadow: '0 0 0 3px rgba(196, 106, 62, 0.15)',
+    },
+    '.Label': {
+      fontWeight: '700',
+    },
+    '.Tab': {
+      border: '1px solid #e8dcc8',
+      borderRadius: '8px',
+    },
+    '.Tab--selected': {
+      border: '1px solid #c46a3e',
+      backgroundColor: 'rgba(196, 106, 62, 0.06)',
+    },
+  },
+};
 
 @Component({
   selector: 'app-checkout',
@@ -80,7 +119,7 @@ export class Checkout {
     }
 
     this.stripe = stripe;
-    this.elements = stripe.elements({ clientSecret });
+    this.elements = stripe.elements({ clientSecret, appearance: STRIPE_APPEARANCE });
     const paymentElement = this.elements.create('payment');
     paymentElement.mount(container);
     paymentElement.on('ready', () => this.paymentElementReady.set(true));
