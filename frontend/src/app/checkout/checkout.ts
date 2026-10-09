@@ -67,7 +67,7 @@ export class Checkout {
   protected readonly submittingPayment = signal(false);
   protected readonly paymentElementReady = signal(false);
   readonly error = signal<string | null>(null);
-  // No real Stripe account exists in this environment yet - see CLAUDE.md and
+  // No real Stripe account exists in this environment yet - see
   // guideline 06's completion notes. Shown as a real, honest state rather
   // than pretending checkout works end to end.
   protected readonly stripeConfigured = !!environment.stripePublishableKey;

@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // SQLite locally (no server to install, disposable dev data), Postgres in
-// production (Render's managed database) - see CLAUDE.md Key Trap 7. Default
+// production (Render's managed database). Default
 // is Sqlite so local dev needs no extra configuration; Render sets
 // Database__Provider=Postgres explicitly.
 var databaseProvider = builder.Configuration["Database:Provider"] ?? "Sqlite";
@@ -61,7 +61,7 @@ var app = builder.Build();
 
 // Prepares the database on startup so no separate manual step is needed
 // (locally or on Render). Sqlite has no versioned migration history in this
-// project (see CLAUDE.md Key Trap 7 - EF Core migrations aren't portable
+// project (EF Core migrations aren't portable
 // between providers, and the local SQLite file is disposable dev data
 // anyway), so it just gets its schema created directly; Postgres applies the
 // real, checked-in migration set.

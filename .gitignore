@@ -21,6 +21,3 @@ frontend/src/environments/environment.secrets.ts
 .vscode/
 *.suo
 Thumbs.db
-
-# Claude Code project instructions (kept local)
-CLAUDE.md

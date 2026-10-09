@@ -7,8 +7,8 @@ namespace Store.Api.Controllers;
 /// <summary>
 /// Plain-cookie session handling shared by <see cref="CartController"/> and
 /// <see cref="CheckoutController"/>. Deliberately not ASP.NET session-state
-/// middleware - just an opaque id in a cookie, per CLAUDE.md ("Auth: none in
-/// v1 - carts are anonymous, keyed by a session cookie").
+/// middleware - just an opaque id in a cookie: there is no auth in v1, carts
+/// are anonymous and keyed by a session cookie.
 /// </summary>
 internal static class CartSession
 {

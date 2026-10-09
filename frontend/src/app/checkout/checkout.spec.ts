@@ -8,7 +8,7 @@ import { ApiService } from '../services/api.service';
 // loadStripe is a free function import, not an injectable - mocking the
 // module is the only way to keep this test from trying to load real
 // Stripe.js (and failing, since no publishable key exists in this
-// environment - see CLAUDE.md and guideline 06's completion notes).
+// environment - see guideline 06's completion notes).
 vi.mock('@stripe/stripe-js', () => ({
   loadStripe: vi.fn().mockResolvedValue({
     elements: vi.fn().mockReturnValue({

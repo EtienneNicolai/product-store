@@ -39,7 +39,7 @@ public class CheckoutController : ControllerBase
     // POST /api/checkout/create-payment-intent -> {"email": "customer@example.com"}
     // Computes the total server-side from the cart's current items/prices,
     // creates a Stripe PaymentIntent for that amount, and a matching "pending"
-    // Order row storing the PaymentIntent id (see CLAUDE.md Key Trap 1 and 6).
+    // Order row storing the PaymentIntent id.
     [HttpPost("api/checkout/create-payment-intent")]
     public async Task<ActionResult<CreatePaymentIntentResponse>> CreatePaymentIntent(
         [FromBody] CreatePaymentIntentRequest request, CancellationToken ct)
@@ -76,7 +76,7 @@ public class CheckoutController : ControllerBase
         if (string.IsNullOrWhiteSpace(secretKey))
         {
             // Expected in this environment - no real Stripe account/keys are
-            // configured yet. See CLAUDE.md Key Trap 5: the secret key is read
+            // configured yet. The secret key is read
             // here, server-side only, never sent to the frontend.
             return Problem(
                 detail: "Stripe is not configured: Stripe:SecretKey is missing. Set it via `dotnet user-secrets set Stripe:SecretKey ...`.",
@@ -143,8 +143,8 @@ public class CheckoutController : ControllerBase
     }
 
     // POST /api/checkout/webhook -> raw Stripe event payload.
-    // Must read the raw body directly (no [FromBody] DTO - see CLAUDE.md Key
-    // Trap 2) so Stripe.EventUtility can verify the signature against the
+    // Must read the raw body directly (no [FromBody] DTO)
+    // so Stripe.EventUtility can verify the signature against the
     // exact bytes Stripe signed, before any of it is trusted.
     [HttpPost("api/checkout/webhook")]
     public async Task<IActionResult> HandleWebhook(CancellationToken ct)
