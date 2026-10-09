@@ -7,7 +7,7 @@ cart" button.
 
 **Status:** All 6 build sessions complete - catalog, cart, checkout, API wiring, Angular
 frontend, and automated tests. Deploying to Render (see Deployment below); checkout can't be
-exercised fully end to end until a real Stripe test-mode account is connected (see `CLAUDE.md`).
+exercised fully end to end until a real Stripe test-mode account is connected.
 See `guidelines/` for the full session-by-session build plan and what actually changed along the
 way.
 
@@ -23,8 +23,7 @@ way.
 ## Stack
 
 - **Backend:** ASP.NET Core Web API (.NET 8) + Entity Framework Core
-- **Database:** SQLite locally, Postgres in production (see `CLAUDE.md` Key Trap 7 for how the
-  provider switch is handled, and Deployment below for why Postgres/Render rather than the
+- **Database:** SQLite locally, Postgres in production (see Deployment below for why Postgres/Render rather than the
   originally planned SQL Server/Azure SQL)
 - **Payments:** Stripe.NET SDK (Payment Intents API)
 - **Frontend:** Angular
@@ -46,9 +45,9 @@ ng serve
 ```
 
 Backend on http://localhost:5000 (or whatever `launchSettings.json` assigns), frontend on
-http://localhost:4200. `--legacy-peer-deps` is required here - see `CLAUDE.md` Key Trap 8.
+http://localhost:4200. `--legacy-peer-deps` is required here.
 
-Requires a Stripe account (test mode) - see `CLAUDE.md` for how keys are configured.
+Requires a Stripe account (test mode).
 
 ## Running tests
 
@@ -62,7 +61,7 @@ cd frontend
 ng test --watch=false
 ```
 
-Backend tests never hit a real database or make a real Stripe API call - see `CLAUDE.md` and
+Backend tests never hit a real database or make a real Stripe API call - see
 `guidelines/07-testing.md` for how.
 
 ## Deployment
@@ -70,7 +69,7 @@ Backend tests never hit a real database or make a real Stripe API call - see `CL
 Deployed to Render, not Azure - the originally planned SQL Server/Azure SQL target was dropped
 because Azure's account signup (card, phone/identity verification) was too much friction for a
 personal demo project. This is a genuine change to the plan, not just a hosting detail: the
-backend now targets Postgres in production instead of SQL Server (see `CLAUDE.md` Key Trap 7).
+backend now targets Postgres in production instead of SQL Server.
 
 Three separate resources, in this order:
 
@@ -113,7 +112,7 @@ the name chosen at creation) - update it if a different name was used.
 - Backlog lives in GitHub Issues.
 - One branch per feature or fix. Branch from `master`.
 - Parallel work uses git worktrees when more than one session is in flight at once.
-- See `CLAUDE.md` and `guidelines/` for the full architecture and session plan.
+- See `guidelines/` for the full architecture and session plan.
 
 ## Known issues / roadmap
 

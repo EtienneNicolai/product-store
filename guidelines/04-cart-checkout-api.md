@@ -7,7 +7,7 @@ exists to practice - take the time to get the webhook handling right.
 ## Owns
 - `Controllers/CartController.cs` - the four cart endpoints from guideline 01
 - `Controllers/CheckoutController.cs` - create-payment-intent and the webhook receiver
-- The Stripe.NET client setup (where the secret key is read from, see CLAUDE.md Key Trap 5)
+- The Stripe.NET client setup (where the secret key is read from)
 
 ## Requirements
 - Every cart endpoint reads/creates the cart from the session cookie - if no cookie exists,
@@ -16,8 +16,8 @@ exists to practice - take the time to get the webhook handling right.
   current items and current product prices - never trust a total sent from the client
 - Create the matching `Order` row (status `pending`) in the same action that creates the
   PaymentIntent, storing `StripePaymentIntentId` so the webhook can find it later
-- The webhook action must verify the Stripe signature using the raw request body (CLAUDE.md
-  Key Trap 2) before trusting the event at all
+- The webhook action must verify the Stripe signature using the raw request body
+  before trusting the event at all
 - On a verified `payment_intent.succeeded` event: look up the Order by
   `StripePaymentIntentId`, set `status = "paid"`, decrement `StockQuantity` on each ordered
   Product, then clear the cart's items. Do all of this in one transaction.

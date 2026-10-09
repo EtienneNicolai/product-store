@@ -101,7 +101,7 @@ Response `400` if `quantity > product.stockQuantity`
 **POST /api/checkout/create-payment-intent** -> `{"email": "customer@example.com"}`
 Response `200`: `{"clientSecret": "pi_..._secret_...", "totalCents": 1000, "orderId": 1}`
 Creates a Stripe PaymentIntent for the current cart's total and a matching `Order` row with
-`status = "pending"`. Does not decrement stock yet (see Key Trap 6 in CLAUDE.md). `orderId` was
+`status = "pending"`. Does not decrement stock yet. `orderId` was
 added in Session 5 - the frontend needs it for Stripe's `return_url` and to poll
 `GET /api/orders/{id}` afterward.
 
@@ -142,8 +142,8 @@ Sessions must not import from each other's controllers.
 ### Backend (NuGet)
 | Package | Used for | Verify |
 |---|---|---|
-| `Microsoft.EntityFrameworkCore.Sqlite` | EF Core + SQLite provider (local dev - see CLAUDE.md Key Trap 7) | `dotnet list package` |
-| `Npgsql.EntityFrameworkCore.PostgreSQL` | EF Core + Postgres provider (production, on Render - see CLAUDE.md Key Trap 7) | `dotnet list package` |
+| `Microsoft.EntityFrameworkCore.Sqlite` | EF Core + SQLite provider (local dev) | `dotnet list package` |
+| `Npgsql.EntityFrameworkCore.PostgreSQL` | EF Core + Postgres provider (production, on Render) | `dotnet list package` |
 | `Microsoft.EntityFrameworkCore.Tools` | Migrations | `dotnet ef --version` |
 | `Stripe.net` | Stripe API client | `dotnet list package` |
 | `Microsoft.AspNetCore.Cors` | CORS for the Angular origin | included in ASP.NET Core |
@@ -167,7 +167,7 @@ dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Stripe.net
 dotnet new xunit -n Store.Api.Tests -o ../Store.Api.Tests
 
-# Frontend - use the v21-lts dist-tag, not @latest (see CLAUDE.md Key Trap 8)
+# Frontend - use the v21-lts dist-tag, not @latest
 npx @angular/cli@21 new frontend --routing --style=scss --skip-git
 cd frontend
 npm install --legacy-peer-deps
@@ -180,5 +180,5 @@ Then:
 3. Set the publishable key in `frontend/src/environments/environment.ts`
 4. Just run `dotnet run` - the app creates its own local SQLite database on startup
    (`Database.EnsureCreated()`), no separate migration step needed (no LocalDB/SQL Server
-   Express available in this environment either - see CLAUDE.md Key Trap 7 for how production's
+   Express available in this environment either; production's
    Postgres target is handled separately, on Render)

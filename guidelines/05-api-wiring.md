@@ -6,8 +6,8 @@ Wire everything built in Sessions 1-3 into a running application.
 ## Owns
 - `Program.cs` - DI registration for `StoreDbContext`, controller registration, CORS policy,
   Swagger/OpenAPI setup
-- The raw-body middleware configuration specifically for the webhook route (CLAUDE.md Key
-  Trap 2) - the webhook endpoint needs different request body handling than every other
+- The raw-body middleware configuration specifically for the webhook route -
+  the webhook endpoint needs different request body handling than every other
   controller action, this has to be scoped to that one route, not applied globally
 
 ## Requirements
